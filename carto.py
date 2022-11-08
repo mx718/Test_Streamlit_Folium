@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_folium import st_folium
 import folium
 import pandas as pd 
+from folium.plugins import MarkerCluster
 
 
 #import data
@@ -13,7 +14,8 @@ df = df.rename(columns={'latitude' : 'lat' , 'longitude' : 'lon'})
 df = df.dropna(subset=['lat', 'lon'])
 df.info(verbose=True, null_counts=True)
 
-df = df.drop(df.iloc[:30,72:94],axis=1)
+df = df.drop(df.iloc[:60,72:94],axis=1)
+df = df[["SURF_HAB_TOTAL","lat","lon","geombui","adedpe202006_mean_class_estim_ges"]]
 df.reset_index()
 df.info(verbose=True, null_counts=True)
 
@@ -59,8 +61,10 @@ tile = folium.TileLayer(
        ).add_to(m)
 
 
+marker_cluster = folium.plugins.MarkerCluster().add_to(m)
+
 for index, location_info in bat_location.iterrows():
-    m.add_child(folium.Marker([location_info["lat"], location_info["lon"]], popup=location_info["geombui"]))
+    folium.Marker([location_info["lat"], location_info["lon"]], popup=[location_info["lat"],location_info["lon"]]).add_to(marker_cluster)
 
 # call to render Folium map in Streamlit
 st_map = st_folium(m, width = 725)
