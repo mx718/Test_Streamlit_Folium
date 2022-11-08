@@ -1,2 +1,4 @@
 pandas
 streamlit
+folium 
+folium.plugins
